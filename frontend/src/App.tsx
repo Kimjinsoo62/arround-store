@@ -21,6 +21,18 @@ const parseWKTPolygon = (wkt: string) => {
 
 const KAKAO_LIBRARIES = ['services', 'clusterer'] as const;
 
+// 마지막으로 본 지도 중심 (기기별 저장). IP 위치가 통신사 거점(예: 성남)으로 잡히는 문제 대신 쓴다
+const LAST_CENTER_KEY = 'arround-store:lastCenter';
+const loadLastCenter = (): { lat: number, lng: number } | null => {
+  try {
+    const v = JSON.parse(localStorage.getItem(LAST_CENTER_KEY) || 'null');
+    return v && Number.isFinite(v.lat) && Number.isFinite(v.lng) ? { lat: v.lat, lng: v.lng } : null;
+  } catch { return null; }
+};
+const saveLastCenter = (c: { lat: number, lng: number }) => {
+  try { localStorage.setItem(LAST_CENTER_KEY, JSON.stringify({ lat: c.lat, lng: c.lng })); } catch { /* 저장 불가 환경 무시 */ }
+};
+
 function App() {
   const [revenueData, setRevenueData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -81,8 +93,23 @@ function App() {
   };
 
   // 폰 모드(GPS) vs PC 모드(구글 위치값) 초기 위치 획득
-  const initLocation = async () => {
+  const initLocation = async (useSaved = true) => {
     const isMobile = checkIsMobile();
+    const saved = useSaved ? loadLastCenter() : null;
+    const useFallback = () => {
+      const c = loadLastCenter() ?? center;
+      if (loadLastCenter()) setLocationSource('📍 마지막 위치');
+      setCenter(c);
+      analyzeRevenue(c.lng, c.lat);
+    };
+
+    // PC 는 마지막 위치가 있으면 바로 거기서 시작 (위치 감지는 [내 위치] 버튼으로)
+    if (!isMobile && saved) {
+      setLocationSource('📍 마지막 위치');
+      setCenter(saved);
+      analyzeRevenue(saved.lng, saved.lat);
+      return;
+    }
 
     if (isMobile) {
       // 1. [폰 모드]: 기기 GPS 하드웨어 센서 우선 활용
@@ -96,13 +123,13 @@ function App() {
             analyzeRevenue(lng, lat);
           },
           (error) => {
-            console.warn("모바일 GPS 수신 실패 또는 권한 미허용, 기본값 사용:", error);
-            analyzeRevenue(center.lng, center.lat);
+            console.warn("모바일 GPS 수신 실패 또는 권한 미허용, 마지막 위치/기본값 사용:", error);
+            useFallback();
           },
           { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
         );
       } else {
-        analyzeRevenue(center.lng, center.lat);
+        useFallback();
       }
     } else {
       // 2. [PC 모드]: 크롬/브라우저 구글 위치 서비스 및 IP 기반 구글 위치값 활용
@@ -155,9 +182,15 @@ function App() {
   };
 
   // 초기 시작 시 위치 감지 실행
+  const locationReady = React.useRef(false);
   useEffect(() => {
-    initLocation();
+    initLocation().finally(() => { locationReady.current = true; });
   }, []);
+
+  // 지도 중심이 바뀌면 이 기기에 저장 (초기 기본값은 저장하지 않음)
+  useEffect(() => {
+    if (locationReady.current) saveLastCenter(center);
+  }, [center]);
 
   // 중심 좌표가 바뀔 때마다 카카오 지오코더를 이용해 행정동 코드(divId) 및 상세 도로명/지번 주소 알아내기
   useEffect(() => {
@@ -542,7 +575,7 @@ function App() {
                 </div>
               </div>
               <button 
-                onClick={() => initLocation()}
+                onClick={() => initLocation(false)}
                 className="shrink-0 text-[10px] bg-white hover:bg-gray-50 text-blue-600 border border-blue-200 rounded px-2 py-1 font-semibold transition-colors shadow-2xs cursor-pointer"
                 title="내 위치 다시 가져오기"
               >
