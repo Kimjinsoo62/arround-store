@@ -42,8 +42,11 @@ export const apiList: ApiDef[] = [
   }
 ];
 
+const PAGE_SIZE = 1000; // 공공데이터 상가정보 API 한 번에 받을 수 있는 최대 건수
+
 export default function ApiTestPanel({ center, divId, radius, onStateChange, forceApiIdx, onApiIndexChange, onZoneClick, onStoreClick }: { center: { lat: number, lng: number }, divId: string, radius?: number, onStateChange?: (endpoint: string, params: Record<string, string>) => void, forceApiIdx?: number, onApiIndexChange?: (idx: number) => void, onZoneClick?: (zone: any) => void, onStoreClick?: (store: any) => void }) {
   const [selectedApiIdx, setSelectedApiIdx] = useState(0);
+  const [lastQuery, setLastQuery] = useState<{ endpoint: string, params: Record<string, string>, page: number } | null>(null);
   const [paramValues, setParamValues] = useState<Record<string, string>>(() => {
     const init: Record<string, string> = {};
     apiList[0].params.forEach(p => {
@@ -163,11 +166,39 @@ export default function ApiTestPanel({ center, divId, radius, onStateChange, for
           finalParams[p.key] = val;
         }
       });
-      const q = new URLSearchParams(finalParams).toString();
-      const res = await axios.get(`/api/sdsc2/${currentApi.endpoint}?${q}`);
-      setResult(res.data);
+      await runQuery(currentApi.endpoint, finalParams);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 공공데이터 API 는 numOfRows 를 안 주면 기본 10~20건만 준다 → 최대치(1000)씩 받고, 넘으면 [더 보기]로 이어 받는다
+  const runQuery = async (endpoint: string, params: Record<string, string>, page = 1) => {
+    const append = page > 1;
+    if (!append) setResult(null);
+    try {
+      const q = new URLSearchParams({ ...params, numOfRows: String(PAGE_SIZE), pageNo: String(page) }).toString();
+      const res = await axios.get(`/api/sdsc2/${endpoint}?${q}`);
+      if (append) {
+        setResult((prev: any) => ({
+          ...res.data,
+          body: { ...res.data?.body, items: [...(prev?.body?.items || []), ...(res.data?.body?.items || [])] },
+        }));
+      } else {
+        setResult(res.data);
+      }
+      setLastQuery({ endpoint, params, page });
     } catch (err: any) {
-      setResult({ error: err.message });
+      if (append) alert(`다음 목록을 불러오지 못했습니다: ${err.message}`);
+      else setResult({ error: err.message });
+    }
+  };
+
+  const loadMore = async () => {
+    if (!lastQuery) return;
+    setLoading(true);
+    try {
+      await runQuery(lastQuery.endpoint, lastQuery.params, lastQuery.page + 1);
     } finally {
       setLoading(false);
     }
@@ -203,11 +234,7 @@ export default function ApiTestPanel({ center, divId, radius, onStateChange, for
           finalParams[p.key] = val;
         }
       });
-      const q = new URLSearchParams(finalParams).toString();
-      const res = await axios.get(`/api/sdsc2/storeListInRadius?${q}`);
-      setResult(res.data);
-    } catch (err: any) {
-      setResult({ error: err.message });
+      await runQuery("storeListInRadius", finalParams);
     } finally {
       setLoading(false);
     }
@@ -249,7 +276,7 @@ export default function ApiTestPanel({ center, divId, radius, onStateChange, for
         <div className="flex justify-between items-end mb-3 px-1">
           <h3 className="font-semibold text-gray-800">조회 결과</h3>
           <span className="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
-            총 {totalCount}건
+            {items.length < totalCount ? `${items.length.toLocaleString()} / 총 ${Number(totalCount).toLocaleString()}건` : `총 ${Number(totalCount).toLocaleString()}건`}
           </span>
         </div>
         <div className="space-y-2 pb-6">
@@ -311,6 +338,12 @@ export default function ApiTestPanel({ center, divId, radius, onStateChange, for
               </div>
             );
           })}
+          {items.length < totalCount && (
+            <button onClick={loadMore} disabled={loading}
+              className="w-full py-1.5 text-xs font-bold rounded border border-indigo-300 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 disabled:opacity-50">
+              {loading ? '불러오는 중...' : `더 보기 (+${Math.min(PAGE_SIZE, totalCount - items.length).toLocaleString()}건)`}
+            </button>
+          )}
         </div>
       </div>
     );
