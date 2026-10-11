@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { HDR_BTN, BTN_VARIANT } from './ui';
 
-// 우측 상단 [업데이트] [설명서] [종료] — 서버 API 는 backend/app_control.py
+// 상단 메뉴 2행의 [업데이트] [설명서] [종료] — 서버 API 는 backend/app_control.py
+// 버튼 3개를 그대로 내보내 부모 grid 의 칸에 들어간다 (팝업은 fixed 라 칸을 차지하지 않음)
 type Popup =
   | { kind: 'msg'; title: string; body: string }
   | { kind: 'confirm'; commits: string[]; localChanges: boolean }
@@ -85,11 +87,9 @@ export default function AppToolbar() {
 
   return (
     <>
-      <div className="fixed top-1 right-1 z-[60] flex items-center gap-1">
-        <button onClick={checkUpdate} disabled={busy} className={`${btn} bg-white hover:bg-gray-100 text-gray-700 border-gray-300`}>업데이트</button>
-        <a href="/사용설명서.html" target="_blank" rel="noopener noreferrer" className={`${btn} bg-white hover:bg-gray-100 text-gray-700 border-gray-300 no-underline`}>설명서</a>
-        <button onClick={shutdown} disabled={busy} className={`${btn} bg-red-600 hover:bg-red-700 text-white border-red-700`}>종료</button>
-      </div>
+      <button onClick={checkUpdate} disabled={busy} title="GitHub 에서 새 버전 확인" className={`${HDR_BTN} ${BTN_VARIANT.normal}`}>업데이트</button>
+      <a href="/사용설명서.html" target="_blank" rel="noopener noreferrer" title="사용설명서 (새 탭)" className={`${HDR_BTN} ${BTN_VARIANT.normal}`}>설명서</a>
+      <button onClick={shutdown} disabled={busy} title="앱 종료" className={`${HDR_BTN} ${BTN_VARIANT.danger}`}>종료</button>
 
       {popup && (
         <div className="fixed inset-0 z-[90] bg-black/40 flex items-center justify-center p-4">

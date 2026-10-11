@@ -5,6 +5,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import ApiTestPanel from './ApiTestPanel';
 import AppToolbar from './AppToolbar';
+import { HDR_BTN, BTN_VARIANT } from './ui';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -397,159 +398,36 @@ function App() {
 
   return (
     <div className="flex flex-col md:flex-row h-screen w-full bg-gray-100">
-      <AppToolbar />
       {/* Sidebar */}
       <div className="w-full md:w-1/3 h-1/2 md:h-full p-3 md:p-4 bg-white shadow-lg z-10 flex flex-col overflow-hidden">
         
-        {/* Tabs / Header */}
-        <div className="flex items-center justify-between border-b border-gray-200 mb-3 shrink-0 relative">
-          
-          {/* Desktop Tabs */}
-          <div className="hidden md:flex w-full">
-            <div className={`flex-1 flex items-center justify-center border-b-2 transition-colors ${activeTab === 'revenue' ? 'border-blue-600' : 'border-transparent'}`}>
-              <button 
-                onClick={() => setActiveTab('revenue')}
-                className={`py-2 text-sm font-bold transition-colors ${activeTab === 'revenue' ? 'text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
-              >
-                상권분석
+        {/* Header: 1행 상권분석 ▏ 검색 4종 · 2행 반경·도움말 ▏ 업데이트·설명서·종료 (버튼 모양은 ui.ts) */}
+        <div className="shrink-0 mb-2 space-y-1.5 border-b border-gray-200 pb-2">
+          <div className="grid grid-cols-[1.4fr_2px_1fr_1fr_1fr_1fr] gap-1">
+            <button onClick={() => setActiveTab('revenue')} title="주변 상권 분석"
+              className={`${HDR_BTN} ${activeTab === 'revenue' ? BTN_VARIANT.active : BTN_VARIANT.normal}`}>상권분석</button>
+            <div className="w-px h-5 self-center justify-self-center bg-gray-300" />
+            {([
+              { label: '상권 🔍', title: '상권조회', active: activeTab === 'apiTest' && selectedApiIdx === 0, onClick: () => { setActiveTab('apiTest'); setSelectedApiIdx(0); } },
+              { label: '업종 🔍', title: '업종조회', active: activeTab === 'apiTest' && selectedApiIdx === 1, onClick: () => { setActiveTab('apiTest'); setSelectedApiIdx(1); } },
+              { label: '주소 🔍', title: '주소로 검색', active: false, onClick: () => { setSearchMode('address'); setIsAddressModalOpen(true); } },
+              { label: '상호 🔍', title: '상호로 검색', active: false, onClick: () => { setSearchMode('store'); setIsAddressModalOpen(true); } },
+            ]).map(t => (
+              <button key={t.label} onClick={t.onClick} title={t.title}
+                className={`${HDR_BTN} ${t.active ? BTN_VARIANT.active : BTN_VARIANT.normal}`}>
+                {t.label}
               </button>
-              <div className="ml-2 flex items-center">
-                <select 
-                  value={radius} 
-                  onChange={handleRadiusChange}
-                  className="border border-blue-200 text-blue-800 bg-blue-50 rounded px-1 py-0.5 text-xs outline-none cursor-pointer focus:ring-1 focus:ring-blue-400 font-normal"
-                  title="검색 반경 선택"
-                >
-                  <option value={3}>반경 3m</option>
-                  <option value={10}>반경 10m</option>
-                  <option value={20}>반경 20m</option>
-                  <option value={50}>반경 50m</option>
-                  <option value={100}>반경 100m</option>
-                  <option value={300}>반경 300m</option>
-                  <option value={500}>반경 500m</option>
-                  <option value={1000}>반경 1000m</option>
-                  <option value={2000}>반경 2000m</option>
-                </select>
-                <div className="ml-2 flex items-center space-x-1">
-                  <button 
-                    onClick={() => { setSearchMode('address'); setIsAddressModalOpen(true); }}
-                    className="px-2 py-0.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded flex items-center justify-center transition-colors shadow-sm text-xs font-bold"
-                    title="주소로 검색"
-                  >
-                    주소 🔍
-                  </button>
-                  <button 
-                    onClick={() => { setSearchMode('store'); setIsAddressModalOpen(true); }}
-                    className="px-2 py-0.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded flex items-center justify-center transition-colors shadow-sm text-xs font-bold"
-                    title="상호로 검색"
-                  >
-                    상호 🔍
-                  </button>
-                  <a 
-                    href="/도움말.html" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="px-2 py-0.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded flex items-center justify-center transition-colors shadow-sm text-xs font-bold whitespace-nowrap no-underline"
-                    title="공공데이터 산출 근거 및 도움말"
-                  >
-                    도움말 ❓
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div className={`flex items-center space-x-1 ml-2 border-b-2 transition-colors border-transparent shrink-0 pb-1`}>
-              <button 
-                onClick={() => { setActiveTab('apiTest'); setSelectedApiIdx(0); }}
-                className={`py-1.5 px-3 text-xs font-bold rounded transition-colors ${activeTab === 'apiTest' && selectedApiIdx === 0 ? 'bg-indigo-100 text-indigo-700 shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                title="상권조회"
-              >
-                상권 🔍
-              </button>
-              <button 
-                onClick={() => { setActiveTab('apiTest'); setSelectedApiIdx(1); }}
-                className={`py-1.5 px-3 text-xs font-bold rounded transition-colors ${activeTab === 'apiTest' && selectedApiIdx === 1 ? 'bg-indigo-100 text-indigo-700 shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                title="업종조회"
-              >
-                업종 🔍
-              </button>
-            </div>
+            ))}
           </div>
-
-          {/* Mobile Header (햄버거 메뉴) */}
-          <div className="flex md:hidden w-full items-center justify-between py-2">
-            <div className="flex items-center">
-              <button 
-                onClick={() => setActiveTab('revenue')}
-                className={`text-sm font-bold text-left focus:outline-none flex items-center transition-colors ${activeTab === 'revenue' ? 'text-blue-600' : 'text-gray-500 hover:text-blue-600'}`}
-                title="상권분석으로 돌아가기"
-              >
-                {activeTab !== 'revenue' && (
-                  <svg className="w-4 h-4 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7"/>
-                  </svg>
-                )}
-                상권분석
-              </button>
-              <div className="ml-2 flex items-center">
-                <select 
-                  value={radius} 
-                  onChange={handleRadiusChange}
-                  className="border border-blue-200 text-blue-800 bg-blue-50 rounded px-1 py-0.5 text-xs outline-none cursor-pointer focus:ring-1 focus:ring-blue-400 font-normal shrink-0"
-                  title="검색 반경 선택"
-                >
-                  <option value={3}>반경 3m</option>
-                  <option value={10}>반경 10m</option>
-                  <option value={20}>반경 20m</option>
-                  <option value={50}>반경 50m</option>
-                  <option value={100}>반경 100m</option>
-                  <option value={300}>반경 300m</option>
-                  <option value={500}>반경 500m</option>
-                  <option value={1000}>반경 1000m</option>
-                  <option value={2000}>반경 2000m</option>
-                </select>
-                <div className="ml-1.5 flex items-center space-x-1">
-                  <button 
-                    onClick={() => { setSearchMode('address'); setIsAddressModalOpen(true); }}
-                    className="px-1.5 py-0.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded flex items-center justify-center transition-colors shadow-sm text-[10px] font-bold"
-                    title="주소로 검색"
-                  >
-                    주소 🔍
-                  </button>
-                  <button 
-                    onClick={() => { setSearchMode('store'); setIsAddressModalOpen(true); }}
-                    className="px-1.5 py-0.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded flex items-center justify-center transition-colors shadow-sm text-[10px] font-bold"
-                    title="상호로 검색"
-                  >
-                    상호 🔍
-                  </button>
-                  <a 
-                    href="/도움말.html" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="px-1.5 py-0.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded flex items-center justify-center transition-colors shadow-sm text-[10px] font-bold whitespace-nowrap no-underline"
-                    title="공공데이터 산출 근거 및 도움말"
-                  >
-                    도움말 ❓
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center space-x-1 shrink-0">
-              <button 
-                onClick={() => { setActiveTab('apiTest'); setSelectedApiIdx(0); }}
-                className="px-1.5 py-0.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded flex items-center justify-center transition-colors shadow-sm text-[10px] font-bold"
-                title="상권조회"
-              >
-                상권 🔍
-              </button>
-              <button 
-                onClick={() => { setActiveTab('apiTest'); setSelectedApiIdx(1); }}
-                className="px-1.5 py-0.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded flex items-center justify-center transition-colors shadow-sm text-[10px] font-bold"
-                title="업종조회"
-              >
-                업종 🔍
-              </button>
-            </div>
+          <div className="grid grid-cols-[1.4fr_1fr_2px_1fr_1fr_1fr] gap-1">
+            <select value={radius} onChange={handleRadiusChange} title="검색 반경 선택"
+              className={`${HDR_BTN} ${BTN_VARIANT.radius}`}>
+              {[3, 10, 20, 50, 100, 300, 500, 1000, 2000].map(r => <option key={r} value={r}>반경 {r}m</option>)}
+            </select>
+            <a href="/도움말.html" target="_blank" rel="noopener noreferrer" title="공공데이터 산출 근거 및 도움말"
+              className={`${HDR_BTN} ${BTN_VARIANT.help}`}>도움말 ❓</a>
+            <div className="w-px h-5 self-center justify-self-center bg-gray-300" />
+            <AppToolbar />
           </div>
         </div>
 
