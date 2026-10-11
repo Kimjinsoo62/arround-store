@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Around Store - 데이터 산출 근거 및 도움말</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-light: #eff6ff;
+      --primary-dark: #1d4ed8;
+      --indigo: #4f46e5;
+      --indigo-light: #eef2ff;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-600: #4b5563;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+      --success: #10b981;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--gray-50);
+      color: var(--gray-800);
+      line-height: 1.6;
+      padding: 24px 16px;
+    }
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+      border: 1px solid var(--gray-200);
+    }
+    .header {
+      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+      color: #ffffff;
+      padding: 36px 32px;
+      position: relative;
+    }
+    .header h1 {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header p {
+      font-size: 14px;
+      color: #e0e7ff;
+      line-height: 1.5;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+    .content {
+      padding: 32px;
+    }
+    .section {
+      margin-bottom: 36px;
+    }
+    .section:last-child {
+      margin-bottom: 0;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--primary-light);
+    }
+    .section-title .icon {
+      color: var(--primary);
+      font-size: 20px;
+    }
+    .card {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .card p, .card li {
+      font-size: 14px;
+      color: var(--gray-600);
+    }
+    .card ul {
+      margin-top: 8px;
+      padding-left: 20px;
+    }
+    .card li {
+      margin-bottom: 6px;
+    }
+    .api-tag {
+      display: inline-block;
+      background: #dbeafe;
+      color: #1e40af;
+      font-family: monospace;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 13px;
+    }
+    th, td {
+      padding: 10px 12px;
+      border: 1px solid var(--gray-200);
+      text-align: left;
+    }
+    th {
+      background-color: var(--gray-100);
+      color: var(--gray-800);
+      font-weight: 600;
+    }
+    td.num {
+      text-align: right;
+      font-family: monospace;
+      font-weight: 600;
+    }
+    .callout {
+      background: #eff6ff;
+      border-left: 4px solid var(--primary);
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      margin: 16px 0;
+      font-size: 13px;
+      color: #1e3a8a;
+    }
+    .callout-warning {
+      background: #fffbeb;
+      border-left-color: #f59e0b;
+      color: #92400e;
+    }
+    .btn-close {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #2563eb;
+      color: #ffffff;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: background 0.2s;
+      margin-top: 20px;
+    }
+    .btn-close:hover {
+      background: #1d4ed8;
+    }
+    .footer {
+      text-align: center;
+      padding: 20px;
+      background: var(--gray-50);
+      border-top: 1px solid var(--gray-200);
+      font-size: 12px;
+      color: var(--gray-600);
+    }
+    @media (max-width: 640px) {
+      body {
+        padding: 8px;
+      }
+      .content {
+        padding: 20px 16px;
+      }
+      .header {
+        padding: 24px 16px;
+      }
+      .header h1 {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="badge">공공데이터포털 Open API 연동 안내</div>
+      <h1>📊 Around Store 데이터 산출 근거 및 도움말</h1>
+      <p>Around Store에서 제공하는 반경별 상가 분석, 업종 분포도, 상권 구역 및 추정 매출액 데이터의 수집 출처와 산출 알고리즘 안내입니다.</p>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- Section 1 -->
+      <div class="section">
+        <h2 class="section-title">
+          <span class="icon">🏛️</span> 1. 데이터 공식 출처
+        </h2>
+        <div class="card">
+          <div class="card-title">소상공인시장진흥공단 상가(상권)정보 오픈 API (sdsc2)</div>
+          <p>본 서비스는 <strong>행정안전부 공공데이터포털(data.go.kr)</strong>을 통해 제공되는 <strong>소상공인시장진흥공단(SEMAS)</strong>의 공공데이터를 기반으로 실시간 조회 및 분석을 수행합니다.</p>
+          <ul>
+            <li><strong>제공 기관</strong>: 중소벤처기업부 산하 소상공인시장진흥공단</li>
+            <li><strong>데이터 세트명</strong>: 소상공인시장진흥공단_상가(상권)정보 (OpenAPI)</li>
+            <li><strong>기본 엔드포인트</strong>: <span class="api-tag">https://apis.data.go.kr/B553077/api/open/sdsc2/</span></li>
+            <li><strong>법적 근거</strong>: 공공데이터의 제공 및 이용 활성화에 관한 법률 (법률 제11956호)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 2 -->
+      <div class="section">
+        <h2 class="section-title">
+          <span class="icon">📡</span> 2. 활용 오픈 API 및 데이터 수집 원리
+        </h2>
+
+        <!-- API 1 -->
+        <div class="card">
+          <div class="card-title">
+            <span>① 지정 반경 내 상가업소 및 업종 조회</span>
+            <span class="api-tag">storeListInRadius</span>
+          </div>
+          <p>사용자가 지도에서 클릭한 중심 좌표(경도 <code>cx</code>, 위도 <code>cy</code>)와 선택한 반경(<code>radius</code>, 3m ~ 2000m)을 기반으로 해당 영역에 위치한 상가업소 목록을 호출합니다.</p>
+          <ul>
+            <li><strong>수집 데이터 항목</strong>: 상가업소명(상호명), 업종 대분류명(음식, 소매, 서비스 등), 중분류명, 도로명/지번 주소, 위도/경도 좌표</li>
+            <li><strong>활용 목적</strong>:
+              <ul>
+                <li>반경 내 <strong>총 점포 수(Total Stores)</strong> 산출</li>
+                <li>업종별 점포 점유율 및 상위 5대 업종 <strong>도넛 차트(Doughnut Chart)</strong> 구성</li>
+                <li>지도상에 개별 점포 위치 마커 핀 표시</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- API 2 -->
+        <div class="card">
+          <div class="card-title">
+            <span>② 반경 내 주요 상권 구역 다각형 조회</span>
+            <span class="api-tag">storeZoneInRadius</span>
+          </div>
+          <p>선택 지점 주변에 공식 지정된 골목상권, 발달상권, 전통시장 등 주요 상권의 공간 구역 경계를 조회합니다.</p>
+          <ul>
+            <li><strong>수집 데이터 항목</strong>: 상권번호(<code>trarNo</code>), 주요 상권명(<code>mainTrarNm</code>), 상권 경계 다각형 좌표(<code>coords</code> - WKT POLYGON 규격)</li>
+            <li><strong>시각화 원리</strong>: WKT(Well-Known Text) 좌표 문자열을 위/경도 좌표 리스트로 파싱하여 <strong>카카오맵 위에 실제 상권 다각형(Polygon)</strong>으로 시각화합니다.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 3 -->
+      <div class="section">
+        <h2 class="section-title">
+          <span class="icon">🧮</span> 3. 지표 산출 근거 및 추정 매출액 알고리즘
+        </h2>
+
+        <div class="card">
+          <div class="card-title">📊 1) 업종별 분포 및 비율 계산</div>
+          <p>반경 내 조회된 업종 대분류(<code>indsLclsNm</code>)의 점포 빈도를 집계하여 백분율(%)로 표출합니다.</p>
+          <div class="callout">
+            <strong>공식:</strong> 업종별 비율(%) = (해당 업종 점포 수 ÷ 반경 내 총 점포 수) × 100
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">💰 2) 예상 월 매출액(추정치) 산출 방식</div>
+          <p>공공데이터포털 무료 Open API 정책상 개별 사업자의 실제 금융/카드 매출 원천 데이터는 공개되지 않습니다. 이에 따라 <strong>소상공인 주요 업종별 평균 매출 통계 가중치 모델</strong>을 적용하여 해당 반경의 총 예상 매출 규모를 추정합니다.</p>
+          
+          <table>
+            <thead>
+              <tr>
+                <th>업종 대분류</th>
+                <th>적용 월평균 가중 매출액 (기준치)</th>
+                <th>비고</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>음식</td>
+                <td class="num">4,500만 원</td>
+                <td>외식업 평균 테이블 회전율 반영</td>
+              </tr>
+              <tr>
+                <td>숙박</td>
+                <td class="num">5,000만 원</td>
+                <td>호텔/모텔 객실 단가 반영</td>
+              </tr>
+              <tr>
+                <td>소매</td>
+                <td class="num">2,500만 원</td>
+                <td>편의점, 의류, 잡화 등 유통 평균</td>
+              </tr>
+              <tr>
+                <td>관광 / 여가 / 오락</td>
+                <td class="num">2,000만 원</td>
+                <td>PC방, 노래방, 실내체육 등</td>
+              </tr>
+              <tr>
+                <td>서비스 / 생활서비스</td>
+                <td class="num">1,000 ~ 1,500만 원</td>
+                <td>미용실, 세탁소, 수리업 등</td>
+              </tr>
+              <tr>
+                <td>학문 / 교육</td>
+                <td class="num">1,200만 원</td>
+                <td>보습학원, 교습소 등</td>
+              </tr>
+              <tr>
+                <td>부동산</td>
+                <td class="num">800만 원</td>
+                <td>부동산 중개사무소 평균</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="callout">
+            <strong>추정 총 월매출 공식:</strong><br>
+            추정 월매출 = [∑(반경 내 업종별 점포 × 업종별 가중치)] × (전체 상가 수 ÷ 샘플 상가 수)
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4 -->
+      <div class="section">
+        <h2 class="section-title">
+          <span class="icon">💡</span> 4. 사용 팁 및 주의사항
+        </h2>
+        <div class="card">
+          <ul>
+            <li><strong>지도 클릭으로 빠른 탐색</strong>: 상단에서 반경(예: 300m, 500m)을 선택한 후 지도 위 원하는 위치를 클릭하면 즉시 해당 지점 중심으로 실시간 분석이 갱신됩니다.</li>
+            <li><strong>주소 및 상호 검색</strong>: 상단의 [주소 🔍] 또는 [상호 🔍] 버튼을 통해 특정 지번/도로명 주소나 관심 매장으로 바로 이동할 수 있습니다.</li>
+            <li><strong>상권 구역 클릭</strong>: 지도에 나타난 푸른색 상권 다각형 구역을 클릭하면 해당 상권 중심점으로 자동 이동 및 상세 분석이 진행됩니다.</li>
+            <li><strong>데이터 성격 안내</strong>: 표시되는 예상 월 매출액은 공공데이터 상가 수와 업종 통계 가중치를 결합한 <strong>추정 참고 지표</strong>이며, 실제 사업자의 세무/카드사 신고 매출과 다를 수 있습니다.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Close Button -->
+      <div style="text-align: center; margin-top: 30px;">
+        <button class="btn-close" onclick="window.close();">도움말 창 닫기</button>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      Around Store © 2026 • 소상공인시장진흥공단 공공데이터포털 연동 상권 분석 서비스
+    </div>
+  </div>
+
+</body>
+</html>

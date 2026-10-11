@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>상권분석 사용설명서</title>
+<style>
+  :root { --fg:#1f2937; --muted:#6b7280; --line:#e5e7eb; --bg:#f9fafb; --card:#fff; --accent:#2563eb; --red:#dc2626; }
+  @media (prefers-color-scheme: dark) { :root { --fg:#e5e7eb; --muted:#9ca3af; --line:#374151; --bg:#111827; --card:#1f2937; --accent:#60a5fa; --red:#f87171; } }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font:7pt/1.55 "Malgun Gothic","Segoe UI",sans-serif; color:var(--fg); background:var(--bg); padding:8px; }
+  .wrap { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:6px; }
+  header { max-width:1100px; margin:0 auto 6px; display:flex; align-items:baseline; gap:8px; border-bottom:2px solid var(--accent); padding-bottom:3px; }
+  header h1 { font-size:10pt; }
+  header span { color:var(--muted); }
+  section { background:var(--card); border:1px solid var(--line); border-radius:4px; padding:6px 8px; }
+  h2 { font-size:8pt; color:var(--accent); margin-bottom:3px; }
+  ol, ul { padding-left:14px; }
+  li { margin:1px 0; }
+  b.red { color:var(--red); }
+  code { font-family:Consolas,monospace; background:var(--bg); border:1px solid var(--line); border-radius:2px; padding:0 2px; }
+  table { border-collapse:collapse; width:100%; }
+  td { border-top:1px solid var(--line); padding:2px 3px; vertical-align:top; }
+  td:first-child { white-space:nowrap; font-weight:bold; width:1%; }
+</style>
+</head>
+<body>
+<header><h1>상권분석 사용설명서</h1><span>지도 위 한 지점을 기준으로 반경 안의 상가·업종·추정 매출 규모를 공공데이터로 분석합니다.</span></header>
+<div class="wrap">
+
+<section>
+  <h2>1. 기본 사용법</h2>
+  <ol>
+    <li>왼쪽 위 <b>반경</b>(3m~2000m)을 고릅니다.</li>
+    <li>오른쪽 <b>지도를 클릭</b>하면 그 지점을 중심으로 분석이 시작됩니다.</li>
+    <li>왼쪽에 결과가 표시됩니다: <b>반경 내 상가 수</b>, <b>추정 상권 규모(월간)</b>, <b>주요 업종 Top 5</b> 도넛 차트.</li>
+    <li>지도에는 반경 원, 주변 상권 구역(다각형), 상가 위치가 함께 표시됩니다. 구역·상가를 클릭하면 상세 정보가 나옵니다.</li>
+  </ol>
+</section>
+
+<section>
+  <h2>2. 위치 찾기</h2>
+  <table>
+    <tr><td>주소 🔍</td><td>도로명·지번 주소로 찾아 그 위치로 이동합니다.</td></tr>
+    <tr><td>상호 🔍</td><td>가게·건물 이름으로 찾아 이동합니다.</td></tr>
+    <tr><td>내 위치</td><td>처음 열 때 접속 위치(IP 기준)로 지도를 맞춥니다. 위치 버튼으로 다시 가져올 수 있습니다.</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>3. 상권 🔍 · 업종 🔍 (상세 조회)</h2>
+  <table>
+    <tr><td>상권 🔍</td><td>반경 내 주요 상권 구역 목록. 항목을 클릭하면 해당 상권 영역을 지도에서 분석합니다.</td></tr>
+    <tr><td>업종 🔍</td><td>지도 반경 내 상가업소와 업종 목록. 항목을 클릭하면 지도에서 위치를 보여 줍니다.</td></tr>
+    <tr><td>도움말 ❓</td><td>사용한 공공데이터와 추정치 산출 근거를 설명합니다.</td></tr>
+  </table>
+  <p style="margin-top:3px;color:var(--muted)">※ 추정 매출은 상가 수 × 업종별 평균 가정치로 계산한 참고용 수치입니다.</p>
+</section>
+
+<section>
+  <h2>4. 상단 버튼 (오른쪽 위)</h2>
+  <table>
+    <tr><td>업데이트</td><td>GitHub 원격 저장소에 새 버전이 있는지 확인합니다. 없으면 "최신 버전", 있으면 변경 목록을 보여 주고 <b>승인</b> 시 내려받습니다(진행 바·로그 표시). 끝나면 <b>앱을 재시작</b>하세요. 의존성·화면 코드가 바뀌었으면 안내에 따라 <code>install.bat</code> 또는 <code>npm run build</code>를 실행합니다.<br>포털 서비스로 실행 중일 때는 보안상 앱 폴더에 쓸 수 없어 <b>새 버전 확인만</b> 됩니다. 적용은 <code>start.BAT</code>(개발 모드) 화면의 [업데이트] 또는 앱 폴더에서 <code>git pull</code> 후 포털에서 재시작하세요.</td></tr>
+    <tr><td>설명서</td><td>이 페이지를 새 탭으로 엽니다.</td></tr>
+    <tr><td><b class="red">종료</b></td><td>캐시 삭제 → 서버 종료·포트(3000/8080) 정리 → 명령 창 닫기 → 브라우저 닫기 순으로 진행합니다.<br>
+      포털 서비스로 실행 중일 때는 다른 사용자도 쓰고 있을 수 있어 <b>서버는 유지</b>하고 캐시만 지웁니다. 서비스 정지는 포털 관리자 화면에서 합니다.</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>5. 실행 방법</h2>
+  <table>
+    <tr><td>포털</td><td>My Potal 의 <b>상권분석</b> 카드로 접속합니다(포트 7009). 같은 네트워크의 다른 PC는 <code>http://이PC의IP:7009</code>.</td></tr>
+    <tr><td>개발 모드</td><td><code>install.bat</code>으로 설치 후 <code>start.BAT</code> 실행 → <code>http://localhost:3000</code>.</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>6. 문제 해결</h2>
+  <ul>
+    <li><b>지도가 안 나옴</b>: 카카오 개발자 콘솔 → 플랫폼 → Web 도메인에 접속 주소(<code>http://localhost:7009</code>, <code>http://IP:7009</code> 등)를 등록하세요.</li>
+    <li><b>분석 오류(API Key)</b>: <code>backend\.env</code> 의 <code>DATA_GO_KR_API_KEY</code>(공공데이터포털 인증키)를 확인하세요.</li>
+    <li><b>업데이트 실패</b>: 이 PC에서 고친 파일이 원격 변경과 겹치는 경우입니다. 변경을 정리한 뒤 다시 시도하세요.</li>
+  </ul>
+</section>
+
+</div>
+</body>
+</html>

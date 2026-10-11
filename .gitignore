@@ -1,0 +1,6 @@
+# 포털 실행용 (비밀키·가상환경·로그)
+.env
+.venv/
+logs/
+data/
+__pycache__/
