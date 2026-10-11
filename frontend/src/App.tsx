@@ -378,7 +378,7 @@ function App() {
                 onClick={() => setActiveTab('revenue')}
                 className={`py-2 text-sm font-bold transition-colors ${activeTab === 'revenue' ? 'text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
               >
-                주변 상권 분석
+                상권분석
               </button>
               <div className="ml-2 flex items-center">
                 <select 
@@ -449,14 +449,14 @@ function App() {
               <button 
                 onClick={() => setActiveTab('revenue')}
                 className={`text-sm font-bold text-left focus:outline-none flex items-center transition-colors ${activeTab === 'revenue' ? 'text-blue-600' : 'text-gray-500 hover:text-blue-600'}`}
-                title="주변 상권 분석으로 돌아가기"
+                title="상권분석으로 돌아가기"
               >
                 {activeTab !== 'revenue' && (
                   <svg className="w-4 h-4 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7"/>
                   </svg>
                 )}
-                주변 상권 분석
+                상권분석
               </button>
               <div className="ml-2 flex items-center">
                 <select 
