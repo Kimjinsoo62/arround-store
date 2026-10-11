@@ -507,7 +507,6 @@ function App() {
                   <option value={1000}>반경 1000m</option>
                   <option value={2000}>반경 2000m</option>
                 </select>
-                <span className="ml-1.5 text-[10px] text-blue-800 bg-blue-100 px-1.5 py-0.5 rounded font-semibold tracking-tighter shrink-0">지도클릭</span>
                 <div className="ml-1.5 flex items-center space-x-1">
                   <button 
                     onClick={() => { setSearchMode('address'); setIsAddressModalOpen(true); }}
