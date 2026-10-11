@@ -40,7 +40,7 @@ function App() {
       setMapError("");
     } else if (error) {
       setMapLoaded(false);
-      setMapError("카카오맵 스크립트를 불러오지 못했습니다. 도메인(localhost:3000) 등록 또는 API 키를 확인해주세요.");
+      setMapError(`카카오맵 스크립트를 불러오지 못했습니다. 도메인(${window.location.origin}) 등록 또는 API 키를 확인해주세요.`);
     } else {
       setMapLoaded(true);
       setMapError("");
@@ -397,7 +397,6 @@ function App() {
                   <option value={1000}>반경 1000m</option>
                   <option value={2000}>반경 2000m</option>
                 </select>
-                <span className="ml-2 text-[11px] text-gray-500 font-normal tracking-tight break-keep">반경 선택 후 지도 클릭</span>
                 <div className="ml-2 flex items-center space-x-1">
                   <button 
                     onClick={() => { setSearchMode('address'); setIsAddressModalOpen(true); }}
@@ -647,7 +646,7 @@ function App() {
           <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg shadow-lg max-w-md text-center">
             <h3 className="font-bold text-xl mb-2">지도 로드 실패</h3>
             <p>{mapError}</p>
-            <p className="mt-2 text-sm text-red-600">※ 카카오 개발자 콘솔에서 <strong>JavaScript 키</strong>가 맞는지, <strong>http://localhost:3000</strong> 도메인이 정확히 등록되었는지 확인하세요.</p>
+            <p className="mt-2 text-sm text-red-600">※ 카카오 개발자 콘솔에서 <strong>JavaScript 키</strong>가 맞는지, <strong>{window.location.origin}</strong> 도메인이 정확히 등록되었는지 확인하세요.</p>
           </div>
         )}
         {mapLoaded && (
